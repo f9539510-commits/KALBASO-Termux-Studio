@@ -10,10 +10,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - run: unzip -o kalbaso-termux-studio-android-source.zip
-      - run: echo "sdk.dir=$ANDROID_HOME" > kalbaso-termux-studio-android-source/local.properties
-      - run: chmod +x kalbaso-termux-studio-android-source/gradlew
-      - run: cd kalbaso-termux-studio-android-source && ./gradlew assembleDebug --stacktrace
+      - name: تجهيز المشروع
+        run: |
+          GRADLEW_PATH=$(find . -type f -name "gradlew" | head -n 1)
+          echo "Found gradlew at: $GRADLEW_PATH"
+          PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+          echo "Project dir is: $PROJECT_DIR"
+          echo "sdk.dir=$ANDROID_HOME" > "$PROJECT_DIR/local.properties"
+          chmod +x "$GRADLEW_PATH"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+      - run: cd $PROJECT_DIR && ./gradlew assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: KALBASO-APK
-          path: "**/*.apk"
+          path: "**/build/outputs/apk/debug/*.apk"
