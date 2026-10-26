@@ -5,23 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: فك ضغط تطبيق كلبسو
-        run: unzip -o kalbaso-termux-studio-android-source.zip
-      - name: تجهيز جافا
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: تجهيز Android SDK
-        uses: android-actions/setup-android@v3
-      - name: تجهيز Gradle
-        uses: gradle/actions/setup-gradle@v3
-      - name: بناء تطبيق APK
-        run: |
-          cd kalbaso-termux-studio-android-source
-          gradle assembleDebug --stacktrace
-      - name: حفظ تطبيق APK
-        uses: actions/upload-artifact@v4
+      - run: unzip -o kalbaso-termux-studio-android-source.zip
+      - run: echo "sdk.dir=$ANDROID_HOME" > kalbaso-termux-studio-android-source/local.properties
+      - uses: gradle/actions/setup-gradle@v3
+      - run: cd kalbaso-termux-studio-android-source && gradle assembleDebug
+      - uses: actions/upload-artifact@v4
         with:
-          name: تطبيق-كلبسو-APK
-          path: "**/build/outputs/apk/debug/*.apk"
+          name: KALBASO-APK
+          path: "**/*.apk"
