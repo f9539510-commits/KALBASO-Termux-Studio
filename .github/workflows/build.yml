@@ -5,8 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: عرض الملفات لمعرفة مكان تطبيق كلبسو
+      - name: فك ضغط تطبيق كلبسو
         run: |
+          sudo apt-get install -y unzip
+          unzip -o kalbaso-termux-studio-android-source.zip
           ls -R
           find . -name "gradlew" -type f
       - name: تجهيز جافا
