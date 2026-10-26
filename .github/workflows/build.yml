@@ -6,24 +6,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: فك ضغط تطبيق كلبسو
-        run: |
-          sudo apt-get install -y unzip
-          unzip -o kalbaso-termux-studio-android-source.zip
-          ls -R
-          find . -name "gradlew" -type f
+        run: unzip -o kalbaso-termux-studio-android-source.zip
       - name: تجهيز جافا
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: تجهيز Android SDK
+        uses: android-actions/setup-android@v3
+      - name: تجهيز Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: بناء تطبيق APK
         run: |
-          GRADLEW_PATH=$(find . -name "gradlew" | head -n 1)
-          echo "Found gradlew at $GRADLEW_PATH"
-          chmod +x $GRADLEW_PATH
-          DIR=$(dirname $GRADLEW_PATH)
-          cd $DIR
-          ./gradlew assembleDebug
+          cd kalbaso-termux-studio-android-source
+          gradle assembleDebug --stacktrace
       - name: حفظ تطبيق APK
         uses: actions/upload-artifact@v4
         with:
