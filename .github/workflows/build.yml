@@ -5,17 +5,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: عرض الملفات لمعرفة مكان تطبيق كلبسو
+        run: |
+          ls -R
+          find . -name "gradlew" -type f
       - name: تجهيز جافا
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: السماح بالبناء
-        run: chmod +x gradlew
       - name: بناء تطبيق APK
-        run: ./gradlew assembleDebug
+        run: |
+          GRADLEW_PATH=$(find . -name "gradlew" | head -n 1)
+          echo "Found gradlew at $GRADLEW_PATH"
+          chmod +x $GRADLEW_PATH
+          DIR=$(dirname $GRADLEW_PATH)
+          cd $DIR
+          ./gradlew assembleDebug
       - name: حفظ تطبيق APK
         uses: actions/upload-artifact@v4
         with:
           name: تطبيق-كلبسو-APK
-          path: app/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
